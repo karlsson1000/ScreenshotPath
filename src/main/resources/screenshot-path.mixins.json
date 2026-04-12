@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "dev.stellarmc.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ScreenshotPathMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

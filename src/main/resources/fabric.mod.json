@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "screenshot-path",
+	"version": "${version}",
+	"name": "Screenshot Path",
+	"description": "Redirects Minecraft ingame screenshots (F2) to your specified location.",
+	"authors": [
+		"karlsson1000"
+	],
+	"license": "MIT",
+	"icon": "assets/screenshot-path/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.stellarmc.ScreenshotPath"
+		]
+	},
+	"mixins": [
+		"screenshot-path.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": ">=1.21.6",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
