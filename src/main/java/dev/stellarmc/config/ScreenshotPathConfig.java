@@ -47,9 +47,16 @@ public class ScreenshotPathConfig {
 
     public static Path getScreenshotPath() {
         try {
-            return Path.of(screenshotPath).toAbsolutePath();
+            Path path = Path.of(screenshotPath).toAbsolutePath();
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            return path;
         } catch (InvalidPathException e) {
             ScreenshotPath.LOGGER.warn("[ScreenshotPath] Invalid path in config, falling back to default.");
+            return DEFAULT_PATH.toAbsolutePath();
+        } catch (IOException e) {
+            ScreenshotPath.LOGGER.warn("[ScreenshotPath] Could not create screenshot directory, falling back to default.");
             return DEFAULT_PATH.toAbsolutePath();
         }
     }
