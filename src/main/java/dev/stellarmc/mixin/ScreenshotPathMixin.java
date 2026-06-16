@@ -1,25 +1,36 @@
 package dev.stellarmc.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.stellarmc.config.ScreenshotPathConfig;
-import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
-
-@Mixin(KeyboardHandler.class)
+@Mixin(Minecraft.class)
 public class ScreenshotPathMixin {
 
-    @ModifyArg(
-            method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V",
+    @Inject(
+            method = "handleGlobalKeyPress",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/Screenshot;grab(Ljava/io/File;Lcom/mojang/blaze3d/pipeline/RenderTarget;Ljava/util/function/Consumer;)V"
+                    target = "Lnet/minecraft/client/Screenshot;grab(Lnet/minecraft/client/Minecraft;Z)V"
             ),
-            index = 0
+            cancellable = true
     )
-    private File screenshotPath$redirectDir(File original) {
-        return ScreenshotPathConfig.getScreenshotPath().toFile();
+    private void screenshotPath$interceptScreenshot(
+            InputConstants.Key key,
+            boolean controlDown,
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        Minecraft mc = (Minecraft)(Object)this;
+        Screenshot.grab(
+                ScreenshotPathConfig.getScreenshotPath().toFile(),
+                mc.gameRenderer.mainRenderTarget(),
+                msg -> mc.execute(() -> mc.showDebugChat(msg))
+        );
+        cir.setReturnValue(true);
     }
 }
